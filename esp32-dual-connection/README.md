@@ -10,9 +10,10 @@ Prototype for ESP32-D0WD-V3 / ESP32 Dev Module. **Not a certified safety device.
 | IR obstacle sensor OUT | GPIO26 | **Measure output voltage:** ESP32 GPIO must not receive 5V |
 | Green LED | GPIO18 | Series resistor required |
 | Yellow LED | GPIO19 | Series resistor required |
+| Active-HIGH buzzer module SIG | GPIO23 | Dedicated output; **not** PIR, IR, GPIO18, or GPIO19; verify module current, voltage, active level and driver requirements |
 | Sensor GNDs | GND | Common ground |
 
-PIR active HIGH / IR active LOW are assumptions; validate with raw readings. Debounce is 300ms. Alert demo rule: PIR and IR both active continuously for 1.5s; ACK acknowledges while alert remains active, and state clears when either sensor clears. It **does not** prove a fall or safety incident.
+**Buzzer behavior:** buzzer turns ON only after both sensors stay active for 1.5 s, turns OFF immediately when either sensor clears or ACK arrives. This implementation assumes a low-current active-HIGH buzzer module with compatible logic. A bare/high-current buzzer needs a suitable transistor driver and power arrangement, not direct GPIO drive. The chosen GPIO23 is a new wiring requirement; moving the buzzer signal wire is necessary if it currently shares a sensor/LED output. For active-LOW modules invert BUZZER_ON and BUZZER_OFF. Disconnect power before rewiring.\n\nPIR active HIGH / IR active LOW are assumptions; validate with raw readings. Debounce is 300ms. Alert demo rule: PIR and IR both active continuously for 1.5s; ACK acknowledges while alert remains active, and state clears when either sensor clears. It **does not** prove a fall or safety incident.
 
 ## 1. Arduino IDE upload
 
