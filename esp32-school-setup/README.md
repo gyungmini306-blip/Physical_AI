@@ -50,3 +50,15 @@ ESP32 GPIO에 5V를 직접 입력하면 손상 위험이 있습니다. 전원/�
 - 실제 학교 PC에서 스크립트 전체가 성공하는지는 아직 검증되지 않았습니다.
 
 공식 자료: [Arduino IDE](https://github.com/arduino/arduino-ide/releases), [Arduino CLI](https://github.com/arduino/arduino-cli/releases), [ESP32 Core](https://docs.espressif.com/projects/arduino-esp32/en/latest/installing.html), [CP210x](https://www.silabs.com/software-and-tools/usb-to-uart-bridge-vcp-drivers).
+
+## 추가 기능 — SmartHomeCarePlus
+
+기존 코드에 더해 ESP32의 자체 Wi-Fi로 **스마트폰 웹 대시보드, PIR/IR 감지 횟수, 최근 12개 이벤트 기록, 동시 감지 주의 알림**을 확인하는 별도 예제를 추가했습니다. 원본 코드는 삭제하거나 변경하지 않았습니다.
+
+- 코드: [`sketches/SmartHomeCarePlus/SmartHomeCarePlus.ino`](sketches/SmartHomeCarePlus/SmartHomeCarePlus.ino)
+- 사용법: [`sketches/SmartHomeCarePlus/README.md`](sketches/SmartHomeCarePlus/README.md)
+- `setup.cmd`는 기존 원본 예제를 검사합니다. PLUS를 올리려면 Arduino IDE에서 PLUS 스케치를 직접 열어 업로드해야 합니다.
+- `check-build.cmd`는 원본과 PLUS 두 예제를 컴파일합니다.
+- PLUS 스마트폰 연결: `HomeCare-ESP32` / `homecare2026` → `http://192.168.4.1` (교실 시연용 공개 기본 비밀번호)
+- 동시 센서 감지는 실제 사고나 위험을 판정하지 않으며, 학습용 상태 표시입니다.
+
