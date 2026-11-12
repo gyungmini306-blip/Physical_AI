@@ -6,10 +6,23 @@ if not exist "%CLI%" (
   pause
   exit /b 1
 )
-"%CLI%" core list
 echo.
+echo [1/2] SmartHomeCare (original)
 "%CLI%" compile --fqbn esp32:esp32:esp32 "%~dp0sketches\SmartHomeCare"
-set "RESULT=%ERRORLEVEL%"
-if "%RESULT%"=="0" (echo COMPILE OK) else (echo COMPILE FAILED)
+if errorlevel 1 (
+  echo Original sketch compilation FAILED.
+  pause
+  exit /b 1
+)
+echo.
+echo [2/2] SmartHomeCarePlus (Wi-Fi dashboard)
+"%CLI%" compile --fqbn esp32:esp32:esp32 "%~dp0sketches\SmartHomeCarePlus"
+if errorlevel 1 (
+  echo PLUS sketch compilation FAILED.
+  pause
+  exit /b 1
+)
+echo.
+echo Both sketches compiled successfully.
 pause
-exit /b %RESULT%
+exit /b 0
