@@ -10,6 +10,10 @@ constexpr uint8_t PIR_PIN = 25;
 constexpr uint8_t IR_PIN = 26;
 constexpr uint8_t GREEN_LED = 18;
 constexpr uint8_t YELLOW_LED = 19;
+// Active-HIGH active buzzer module, SIGNAL -> GPIO23; use suitable driver for high current.
+constexpr uint8_t BUZZER_PIN = 23;
+constexpr uint8_t BUZZER_ON = HIGH;
+constexpr uint8_t BUZZER_OFF = LOW;
 constexpr uint8_t PIR_ACTIVE = HIGH;
 constexpr uint8_t IR_ACTIVE = LOW;
 
@@ -70,6 +74,12 @@ class ReceiveCallbacks : public BLECharacteristicCallbacks {
     if (command.equalsIgnoreCase("ACK")) ackRequested = true;
   }
 };
+
+// The buzzer is controlled ONLY by the latched alert and acknowledgement.
+// Neither individual sensor nor its LED directly controls this output.
+void updateBuzzer() {
+  digitalWrite(BUZZER_PIN, (alert && !ack) ? BUZZER_ON : BUZZER_OFF);
+}
 
 void handleAck() {
   if (ackRequested) {
@@ -168,6 +178,8 @@ void setup() {
   pinMode(YELLOW_LED, OUTPUT);
   digitalWrite(GREEN_LED, LOW);
   digitalWrite(YELLOW_LED, LOW);
+  pinMode(BUZZER_PIN, OUTPUT);
+  digitalWrite(BUZZER_PIN, BUZZER_OFF);
 
   uint32_t now = millis();
   pirInput.raw = pirInput.stable = digitalRead(PIR_PIN) == PIR_ACTIVE;
@@ -198,6 +210,7 @@ void loop() {
     lastSample = now;
     sense(now);
   }
+  updateBuzzer();
   if (now - lastReport >= REPORT_MS) {
     lastReport = now;
     report(now);
