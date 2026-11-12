@@ -7,7 +7,7 @@ if not exist "%CLI%" (
   exit /b 1
 )
 echo.
-echo [1/2] SmartHomeCare (original)
+echo [1/3] SmartHomeCare (original)
 "%CLI%" compile --fqbn esp32:esp32:esp32 "%~dp0sketches\SmartHomeCare"
 if errorlevel 1 (
   echo Original sketch compilation FAILED.
@@ -15,7 +15,7 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
-echo [2/2] SmartHomeCarePlus (Wi-Fi dashboard)
+echo [2/3] SmartHomeCarePlus (Wi-Fi dashboard)
 "%CLI%" compile --fqbn esp32:esp32:esp32 "%~dp0sketches\SmartHomeCarePlus"
 if errorlevel 1 (
   echo PLUS sketch compilation FAILED.
@@ -23,6 +23,15 @@ if errorlevel 1 (
   exit /b 1
 )
 echo.
-echo Both sketches compiled successfully.
+echo.
+echo [3/3] SmartHomeCarePlusBuzzer (latched alarm)
+"%CLI%" compile --fqbn esp32:esp32:esp32 "%~dp0sketches\SmartHomeCarePlusBuzzer"
+if errorlevel 1 (
+  echo Buzzer sketch compilation FAILED.
+  pause
+  exit /b 1
+)
+echo.
+echo All three sketches compiled successfully.
 pause
 exit /b 0
