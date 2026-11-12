@@ -1,0 +1,16 @@
+*.bin
+*.elf
+*.map
+*.hex
+*.uf2
+*.log
+*.part
+*.zip
+*.tar
+build/
+.cache/
+Arduino15/
+ESP32SchoolKit/
+.vscode/
+.idea/
+.env
