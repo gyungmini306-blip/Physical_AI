@@ -62,3 +62,9 @@ ESP32 GPIO에 5V를 직접 입력하면 손상 위험이 있습니다. 전원/�
 - PLUS 스마트폰 연결: `HomeCare-ESP32` / `homecare2026` → `http://192.168.4.1` (교실 시연용 공개 기본 비밀번호)
 - 동시 센서 감지는 실제 사고나 위험을 판정하지 않으며, 학습용 상태 표시입니다.
 
+
+## 2핀 부저 경보 확장 예제
+
+- [SmartHomeCarePlusBuzzer.ino](sketches/SmartHomeCarePlusBuzzer/SmartHomeCarePlusBuzzer.ino): PIR+IR 동시 감지 시 부저 경보를 발생시키고 웹의 주의 알림 확인 전까지 유지합니다.
+- [2핀 부저 종류별 연결·설정 안내](sketches/SmartHomeCarePlusBuzzer/README.md): 액티브/패시브 부저 판별 및 구동 회로 주의사항. 부저 정격 확인 전 GPIO에 직접 연결하지 마세요.
+- 기존 `SmartHomeCarePlus.ino`는 변경하지 않았습니다. `check-build.cmd`에서 세 가지 예제를 모두 컴파일할 수 있습니다.
