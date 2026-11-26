@@ -6,7 +6,7 @@ Docker/WSL은 필요 없습니다. 먼저 00번의 setup.cmd를 실행해 공통
 2. check-db.cmd: 실제 연결 및 테이블 조회 확인.
 3. connect-db.cmd: SQL 콘솔 (credentials.json의 app_password 입력).
 4. stop-db.cmd: DB 종료, 데이터 유지.
-5. 상위 폴더 start-server.cmd: DB를 시작하고 ESP32 USB 데이터를 MariaDB에 저장합니다.
+평소에는 상위 폴더 start-server.cmd만 실행하면 DB 시작, COM 포트 감지, USB 데이터 저장, PC 웹 화면 열기가 자동으로 진행됩니다. 위 개별 CMD는 관리 및 진단용입니다.
 
 | 항목 | 값 |
 |---|---|

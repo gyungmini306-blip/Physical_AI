@@ -28,13 +28,18 @@ DHT11을 3초마다 측정하고 약 30초 전과 비교합니다. 기존 판정
 
 ## Windows 실행 (Docker/WSL 불필요)
 
-1. 최신 저장소를 받아 00_아두이노설치/setup.cmd 실행(Arduino, ESP32, DHT, Python, MariaDB).
-2. MariaDB_설정/setup-db.cmd 실행. 네이티브 DB, 계정, 테이블 자동 초기화.
-3. MariaDB_설정/test-db.cmd 실행. 실제 INSERT/SELECT/ROLLBACK 검증. 시험 행은 저장하지 않습니다.
-4. sketches/TemperatureAlert/TemperatureAlert.ino 열고 ESP32 Dev Module, 실제 COM 포트 선택 후 USB 업로드.
-5. Arduino IDE 시리얼 모니터 종료(동일 COM 포트 동시 사용 불가).
-6. start-server.cmd 실행, 표시된 ESP32 COM 포트 입력. DB 자동 시작 및 Flask 실행.
-7. 브라우저 자동 열림; 수동 접속 http://127.0.0.1:5000. CMD 창은 유지. 종료 Ctrl+C.
+처음 한 번만 00_아두이노설치/setup.cmd로 공통 환경을 설치하고 TemperatureAlert.ino를 ESP32에 업로드합니다. 이미 설치 및 업로드를 완료했다면 반복하지 않습니다.
+
+### 평소에는 한 번만 클릭
+
+1. ESP32를 USB로 연결하고 Arduino IDE 시리얼 모니터를 닫습니다.
+2. **start-server.cmd**를 더블클릭합니다.
+
+CP210x COM 포트 자동 감지, MariaDB 시작/초기화/연결 확인, Python USB 수신 서버 실행, 브라우저 자동 열기가 순차 실행됩니다. COM1/COM2 같은 내장 통신 포트는 자동 선택하지 않습니다. CP210x 장치가 여러 개일 때만 번호를 묻습니다. 장치가 감지되지 않으면 오류를 표시합니다. 다른 USB-UART 장치는 명령 프롬프트에서 start-server.cmd COMx (실제 포트)를 사용합니다. 기록만 보려면 start-server.cmd --history를 실행합니다.
+
+웹 주소: http://127.0.0.1:5000. 사용 중 CMD 창을 유지하고 종료는 Ctrl+C. MariaDB는 종료하지 않으며 데이터도 보존합니다. 다시 업로드할 때에는 먼저 서버를 종료합니다.
+
+MariaDB_설정 안의 CMD는 SQL 접속, 개별 검사, DB 종료 등 관리용이며 평상시에는 실행하지 않습니다. 기존 SENSOR_ERROR는 센서 측정 문제로 별도로 해결해야 합니다.
 
 DB는 127.0.0.1:3307 / temperature_alert / measurements. 실제 데이터와 비밀번호는 %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb 아래 보존. 상세: [MariaDB_설정](MariaDB_설정/). 기존 SQLite 데이터는 자동 이전하지 않습니다. 기존 SQLite 기록 조회는 공통 Python으로 server/app.py --backend sqlite 실행.
 
