@@ -87,11 +87,16 @@ def main():
     parser = argparse.ArgumentParser(description="ESP32 temperature database dashboard")
     parser.add_argument("--port", help="Actual ESP32 COM port; omit for history-only mode")
     parser.add_argument("--db", type=Path, default=DEFAULT_DB)
+    parser.add_argument("--backend", choices=["sqlite","mariadb"], default="sqlite")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--http-port", type=int, default=5000)
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
-    db = Database(args.db)
+    if args.backend == 'mariadb':
+        from mariadb_database import MariaDatabase
+        db = MariaDatabase()
+    else:
+        db = Database(args.db)
     connected, stop = threading.Event(), threading.Event()
     thread = None
     if args.port:

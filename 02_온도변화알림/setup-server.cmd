@@ -1,22 +1,13 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-where py >nul 2>&1
-if errorlevel 1 (
- echo Python 3.10+ is required. Install Python from python.org first.
+set "PY=%LOCALAPPDATA%\ESP32SchoolKit\python-env\Scripts\python.exe"
+if not exist "%PY%" (
+ echo Run common setup first.
  pause
  exit /b 1
 )
-py -3 -c "import sys; assert sys.version_info >= (3,10)"
-if errorlevel 1 goto fail
-py -3 -m venv .venv
-if errorlevel 1 goto fail
-".venv\Scripts\python.exe" -m pip install -r server\requirements.txt
-if errorlevel 1 goto fail
-echo Server setup complete.
+"%PY%" -c "import flask,serial,pymysql; print('Common Python dependencies OK')"
+set "RESULT=%ERRORLEVEL%"
 pause
-exit /b 0
-:fail
-echo Server setup failed.
-pause
-exit /b 1
+exit /b %RESULT%

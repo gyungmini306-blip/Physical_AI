@@ -66,7 +66,7 @@ g++ -std=c++11 -Wall -Wextra -pedantic tests/test_trend.cpp -o test_trend
 
 공식 자료: [Adafruit DHT 라이브러리](https://github.com/adafruit/DHT-sensor-library), [ESP32 Wi-Fi API](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html).
 
-## PC 데이터베이스 및 웹 서버 (추가)
+## PC 데이터베이스 및 웹 서버 (기존 SQLite 방식; 참고)
 
 ESP32는 3초마다 USB 시리얼(115200 baud)로 JSON 측정값을 전송합니다. PC의 Python 서버가 이를 수신하여 SQLite에 저장합니다. 별도 MySQL 설치는 필요 없습니다. ESP32 자체 Wi-Fi 페이지 및 LED/부저는 PC와 독립적으로 동작합니다.
 
@@ -74,9 +74,9 @@ ESP32는 3초마다 USB 시리얼(115200 baud)로 JSON 측정값을 전송합니
 
 1. 위 절차로 ESP32에 최신 TemperatureAlert.ino를 업로드합니다.
 2. Python 3.10 이상 설치(없으면 https://www.python.org/downloads/).
-3. 이 폴더의 setup-server.cmd 실행: 가상환경, Flask, pyserial 설치.
+3. 공통 setup.cmd 실행: Python 및 라이브러리 설치.
 4. Arduino IDE의 시리얼 모니터 및 다른 COM 사용 프로그램을 닫습니다.
-5. start-server.cmd 실행 후 실제 ESP32 COM 포트 입력. 미입력 시 과거 기록만 조회합니다.
+5. SQLite 방식은 공통 Python 실행 파일로 server/app.py --backend sqlite --port COM3 실행 (실제 포트로 변경). 미입력 시 과거 기록만 조회합니다.
 6. PC 브라우저에서 http://127.0.0.1:5000 접속. 종료는 Ctrl+C.
 
 DB는 data/temperature.db에 자동 생성됩니다. PC 재부팅 후에도 해당 파일을 보존하면 기록 유지. 초기화되는 학교 PC에서는 DB를 별도로 백업해야 합니다. 백업은 서버 종료 후 DB 파일을 복사하세요. CSV 다운로드도 가능합니다.
@@ -99,6 +99,11 @@ DB는 data/temperature.db에 자동 생성됩니다. PC 재부팅 후에도 해�
 
 DB 테스트: 과제 폴더에서 `py -3 -m unittest discover -s server -v`. 실제 ESP32/Windows 통합 시험은 별도 필요합니다.
 
-## MariaDB 설정 (선택)
+## MariaDB 설정 (기본 실행 방식)
 
-[MariaDB_설정](MariaDB_설정/)에서 DB 서버 및 테이블을 먼저 구성할 수 있습니다. 현재 Flask는 SQLite 기반이며 MariaDB 연동은 후속 단계입니다. 기존 SQLite 실행 방법은 유지합니다.
+1. 00번 setup.cmd로 공통 환경을 준비합니다. Docker/WSL 불필요.
+2. [MariaDB_설정](MariaDB_설정/)의 setup-db.cmd로 DB 및 테이블을 생성합니다.
+3. 최신 ESP32 스케치 업로드 후 시리얼 모니터를 닫습니다.
+4. start-server.cmd 실행 후 COM 포트 입력. PC 웹: http://127.0.0.1:5000.
+
+start-server.cmd는 이제 MariaDB를 사용합니다. SQLite 기존 기록을 보려면 공통 Python 실행 파일로 server/app.py --backend sqlite를 실행하세요. 자동 마이그레이션은 없습니다. Windows 및 실제 보드 검증 필요.

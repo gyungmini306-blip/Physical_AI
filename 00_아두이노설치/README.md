@@ -24,3 +24,9 @@ Windows 10/11 x64, PowerShell 5.1 이상용. 특정 과제와 독립적으로 �
 도구 저장 위치: `%LOCALAPPDATA%\ESP32SchoolKit`. ESP32 Core는 Arduino15에 설치합니다. 드라이버는 관리자 승인 및 학교 정책 허용이 필요할 수 있습니다. 보드에서 GPIO에 5V 신호를 직접 입력하지 마세요.
 
 이번 분리 작업은 소스 수준 변경이며 실제 Windows 설치·컴파일은 재검증 필요합니다. 버전과 다운로드 URL은 기존 설치기에서 유지했습니다.
+
+## 전체 환경 설치 (기본)
+
+setup.cmd는 setup-all.ps1을 실행하며 Arduino 도구, DHT 라이브러리, Python 3.10 이상(없으면 WinGet으로 3.12 설치), Flask, pyserial, PyMySQL, MariaDB 11.4.14 Windows ZIP을 준비합니다. Docker/WSL은 필요 없습니다. Python 공통 가상환경은 %LOCALAPPDATA%/ESP32SchoolKit/python-env 입니다. 인터넷, WinGet(기존 Python이 없는 경우), 학교 정책 및 드라이버 권한에 따라 실패할 수 있습니다. 각 단계 오류는 화면에 표시됩니다. 실제 Windows 설치는 미검증입니다.
+
+02번은 MariaDB_설정/setup-db.cmd로 DB를 초기화합니다.
