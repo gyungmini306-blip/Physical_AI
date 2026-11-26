@@ -4,13 +4,13 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include "TrendMonitor.h"
+#include "AlarmOutput.h"
 
-// DHT11 is the provisional sensor. Change to DHT22 if that is your module.
+// DHT11 on GPIO25; red LED on GPIO18; falling alarm on GPIO23.
 constexpr uint8_t DHT_PIN = 25;
 #define DHT_TYPE DHT11
 constexpr uint8_t RISE_LED = 18;
-constexpr uint8_t FALL_LED = 19;
-constexpr uint8_t BUZZER_PIN = 23; // Active-high driver; verify electrical rating.
+constexpr uint8_t BUZZER_PIN = 23; // Active-high signal to electrically compatible buzzer driver.
 constexpr uint32_t SAMPLE_MS = 3000;
 constexpr uint32_t BUZZER_MS = 1000;
 const char* AP_SSID = "Temperature-ESP32";
@@ -48,17 +48,16 @@ void sampleTemperature(uint32_t now) {
   lastSample = now;
   float value = dht.readTemperature();
   bool event = monitor.update(value);
-  digitalWrite(RISE_LED, monitor.state == Trend::Rising ? HIGH : LOW);
-  digitalWrite(FALL_LED, monitor.state == Trend::Falling ? HIGH : LOW);
+  digitalWrite(RISE_LED, riseLed(monitor.state) ? HIGH : LOW);
   if (event) {
     ++eventCount;
     lastEvent = monitor.state;
     lastEventSec = now / 1000;
+  }
+  if (startBuzzer(monitor.state, event)) {
     alarmStart = now;
     setBuzzer(true);
-  } else if (monitor.state == Trend::SensorError ||
-             monitor.state == Trend::WarmingUp ||
-             monitor.state == Trend::Stable) {
+  } else if (monitor.state != Trend::Falling) {
     setBuzzer(false);
   }
   emitSample(event, now);
@@ -76,9 +75,9 @@ h1{font-size:24px}#temp{font-size:42px;font-weight:bold}#state{font-size:20px;fo
 <section><small>현재 온도</small><div id="temp">--</div><div id="delta">30초 변화량: --</div></section>
 <section><small>현재 상태</small><div id="state">연결 중</div><p id="connection"></p></section>
 <section><div id="count">알림 횟수: 0</div><div id="last">최근 알림: 없음</div></section>
-<small>3초마다 측정 · 약 30초 전 대비 ±2°C 경보 · 웹 화면은 1초마다 갱신</small>
+<small>3초마다 측정 · 약 30초 전 대비 ±2°C · 상승: 빨간 LED / 하강 진입: 부저 1초 · 웹 화면은 1초마다 갱신</small>
 <script>
-const names={WARMING_UP:'측정 준비 중',STABLE:'정상',RISING:'온도 상승 경보',FALLING:'온도 하강 경보',SENSOR_ERROR:'센서 측정 실패'};
+const names={WARMING_UP:'측정 준비 중',STABLE:'정상',RISING:'온도 상승 · 빨간 LED',FALLING:'온도 하강 · 부저 경보',SENSOR_ERROR:'센서 측정 실패'};
 const e=id=>document.getElementById(id);
 const number=v=>typeof v==='number'?v.toFixed(1)+' °C':'--';
 async function poll(){
@@ -142,10 +141,8 @@ void setup() {
   Serial.begin(115200);
   snprintf(bootId, sizeof(bootId), "%08lx%08lx", (unsigned long)esp_random(), (unsigned long)esp_random());
   pinMode(RISE_LED, OUTPUT);
-  pinMode(FALL_LED, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   digitalWrite(RISE_LED, LOW);
-  digitalWrite(FALL_LED, LOW);
   setBuzzer(false);
   dht.begin();
   WiFi.mode(WIFI_AP);

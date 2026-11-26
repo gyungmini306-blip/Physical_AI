@@ -21,3 +21,7 @@ MariaDB 11.4.14 Windows ZIP 배포판 사용. 데이터 및 비밀번호는 %LOC
 compose.yaml 및 setup-docker.ps1은 이전 Docker 방식의 참고용입니다. 기본 실행 경로는 네이티브입니다. Windows 직접 실행과 실제 센서 연동은 아직 검증하지 않았습니다.
 
 공식 문서: https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/installing-mariadb/binary-packages/installing-mariadb-windows-zip-packages
+
+## 실제 DB 검증
+
+setup-db.cmd 이후 test-db.cmd를 실행하면 실제 INSERT, SELECT, ROLLBACK을 확인합니다. 테스트 행은 남기지 않습니다. start-server.cmd는 PC 브라우저를 자동으로 엽니다.

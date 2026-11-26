@@ -18,9 +18,9 @@ set "PORT="
 set /p "PORT=Enter ESP32 COM port (blank for history only): "
 echo Dashboard: http://127.0.0.1:5000
 if defined PORT (
- "%PY%" "%~dp0server\app.py" --backend mariadb --port "%PORT%"
+ "%PY%" "%~dp0server\app.py" --backend mariadb --open-browser --port "%PORT%"
 ) else (
- "%PY%" "%~dp0server\app.py" --backend mariadb
+ "%PY%" "%~dp0server\app.py" --backend mariadb --open-browser
 )
 set "RESULT=%ERRORLEVEL%"
 pause

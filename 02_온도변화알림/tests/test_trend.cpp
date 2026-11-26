@@ -1,6 +1,8 @@
 #include "../sketches/TemperatureAlert/TrendMonitor.h"
+#include "../sketches/TemperatureAlert/AlarmOutput.h"
 #include <cassert>
 #include <cstdio>
+#include <initializer_list>
 
 static void prime(TrendMonitor& m, float temp) {
   for (int i=0; i<HISTORY_SIZE; ++i) {
@@ -40,5 +42,10 @@ int main() {
   assert(!m.update(24));
   for(int i=0;i<40;++i) assert(!m.update(24));
   assert(m.state == Trend::Stable);
-  puts("All trend tests passed.");
+  for (Trend s : {Trend::WarmingUp, Trend::Stable, Trend::Rising, Trend::Falling, Trend::SensorError}) {
+    assert(riseLed(s) == (s == Trend::Rising));
+    assert(startBuzzer(s, true) == (s == Trend::Falling));
+    assert(!startBuzzer(s, false));
+  }
+  puts("All trend and alarm-output tests passed.");
 }

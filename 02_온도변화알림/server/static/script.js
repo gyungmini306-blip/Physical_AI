@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const names={WARMING_UP:"측정 준비",STABLE:"정상",RISING:"상승 경보",FALLING:"하강 경보",SENSOR_ERROR:"센서 오류"};
+const names={WARMING_UP:"측정 준비",STABLE:"정상",RISING:"상승 · 빨간 LED",FALLING:"하강 · 부저 경보",SENSOR_ERROR:"센서 오류"};
 const fmt=v=>typeof v==="number"?v.toFixed(1)+" °C":"--";
 const timeText=v=>new Date(v).toLocaleString("ko-KR");
 const color=s=>s==="RISING"?"rise":s==="FALLING"?"fall":s==="SENSOR_ERROR"?"error":"";

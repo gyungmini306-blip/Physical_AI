@@ -107,6 +107,26 @@ def check():
             print("MariaDB connected. Saved rows:", cur.fetchone()[0])
     finally: c.close()
 
+def selftest():
+    """Verify actual DB INSERT and SELECT; rollback so no fake readings remain."""
+    c = connection()
+    try:
+        verify(c)
+        c.begin()
+        boot = secrets.token_hex(8)
+        with c.cursor() as cur:
+            cur.execute("INSERT INTO measurements (boot,seq,uptime_ms,temperature,delta,state,alarm) VALUES (%s,1,3000,23,-2,'FALLING',1)", (boot,))
+            cur.execute("SELECT temperature, state, alarm FROM measurements WHERE boot=%s AND seq=1", (boot,))
+            if cur.fetchone() != (23.0, "FALLING", 1):
+                raise RuntimeError("MariaDB test data mismatch.")
+        c.rollback()
+        with c.cursor() as cur:
+            cur.execute("SELECT COUNT(*) FROM measurements WHERE boot=%s", (boot,))
+            if cur.fetchone()[0] != 0: raise RuntimeError("Rollback failed.")
+        print("MariaDB INSERT / SELECT / ROLLBACK OK; no test readings retained.")
+    finally:
+        c.close()
+
 def stop():
     c = connection(root=True, database=False)
     try:
@@ -123,7 +143,7 @@ def console():
 
 if __name__ == "__main__":
     parser=argparse.ArgumentParser()
-    parser.add_argument("action", choices=["start","check","stop","console"])
+    parser.add_argument("action", choices=["start","check","stop","console","selftest"])
     args=parser.parse_args()
     try: globals()[args.action]()
     except Exception as exc:

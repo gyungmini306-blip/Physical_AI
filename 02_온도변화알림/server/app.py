@@ -3,6 +3,8 @@ import argparse
 import logging
 import threading
 import time
+import webbrowser
+import urllib.request
 from datetime import date, datetime, time as clock, timedelta, timezone
 from pathlib import Path
 
@@ -90,6 +92,7 @@ def main():
     parser.add_argument("--backend", choices=["sqlite","mariadb"], default="sqlite")
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--http-port", type=int, default=5000)
+    parser.add_argument("--open-browser", action="store_true", help="Open local dashboard once the server responds")
     args = parser.parse_args()
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
     if args.backend == 'mariadb':
@@ -104,6 +107,19 @@ def main():
         thread.start()
     else:
         LOG.info("History-only mode; no serial port selected.")
+    if args.open_browser:
+        def open_dashboard():
+            url = f'http://127.0.0.1:{args.http_port}/'
+            for _ in range(40):
+                if stop.is_set(): return
+                try:
+                    with urllib.request.urlopen(url, timeout=1) as response:
+                        if response.status == 200:
+                            webbrowser.open(url)
+                            return
+                except OSError:
+                    stop.wait(0.5)
+        threading.Thread(target=open_dashboard, daemon=True).start()
     try:
         create_app(db, connected).run(host=args.host, port=args.http_port, debug=False, use_reloader=False)
     finally:
