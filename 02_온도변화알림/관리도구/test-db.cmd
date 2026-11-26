@@ -7,9 +7,9 @@ if not exist "%PY%" (
  pause
  exit /b 1
 )
-"%PY%" "%~dp0native_db.py" start
+"%PY%" "%~dp0manage-db.py" start
 if errorlevel 1 goto fail
-"%PY%" "%~dp0native_db.py" selftest
+"%PY%" "%~dp0manage-db.py" selftest
 if errorlevel 1 goto fail
 echo Database verification successful.
 pause

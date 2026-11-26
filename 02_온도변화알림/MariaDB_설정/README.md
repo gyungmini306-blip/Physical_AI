@@ -2,10 +2,10 @@
 
 Docker/WSL은 필요 없습니다. 먼저 00번의 setup.cmd를 실행해 공통 Arduino/Python/MariaDB 환경을 설치합니다.
 
-1. setup-db.cmd: MariaDB 초기화, 실행, DB 및 계정/테이블 생성.
-2. check-db.cmd: 실제 연결 및 테이블 조회 확인.
-3. connect-db.cmd: SQL 콘솔 (credentials.json의 app_password 입력).
-4. stop-db.cmd: DB 종료, 데이터 유지.
+1. ../관리도구/setup-db.cmd: MariaDB 초기화, 실행, DB 및 계정/테이블 생성.
+2. ../관리도구/check-db.cmd: 실제 연결 및 테이블 조회 확인.
+3. ../관리도구/connect-db.cmd: SQL 콘솔 (credentials.json의 app_password 입력).
+4. ../관리도구/stop-db.cmd: DB 종료, 데이터 유지.
 평소에는 상위 폴더 start-server.cmd만 실행하면 DB 시작, COM 포트 감지, USB 데이터 저장, PC 웹 화면 열기가 자동으로 진행됩니다. 위 개별 CMD는 관리 및 진단용입니다.
 
 | 항목 | 값 |
@@ -24,4 +24,4 @@ compose.yaml 및 setup-docker.ps1은 이전 Docker 방식의 참고용입니다.
 
 ## 실제 DB 검증
 
-setup-db.cmd 이후 test-db.cmd를 실행하면 실제 INSERT, SELECT, ROLLBACK을 확인합니다. 테스트 행은 남기지 않습니다. start-server.cmd는 PC 브라우저를 자동으로 엽니다.
+관리도구/setup-db.cmd 이후 관리도구/test-db.cmd를 실행하면 실제 INSERT, SELECT, ROLLBACK을 확인합니다. 테스트 행은 남기지 않습니다. start-server.cmd는 PC 브라우저를 자동으로 엽니다.

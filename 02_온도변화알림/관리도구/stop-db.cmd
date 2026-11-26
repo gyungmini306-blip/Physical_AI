@@ -7,7 +7,7 @@ if not exist "%PY%" (
  pause
  exit /b 1
 )
-"%PY%" "%~dp0native_db.py" console
+"%PY%" "%~dp0manage-db.py" stop
 set "RESULT=%ERRORLEVEL%"
 pause
 exit /b %RESULT%

@@ -39,7 +39,7 @@ CP210x COM 포트 자동 감지, MariaDB 시작/초기화/연결 확인, Python 
 
 웹 주소: http://127.0.0.1:5000. 사용 중 CMD 창을 유지하고 종료는 Ctrl+C. MariaDB는 종료하지 않으며 데이터도 보존합니다. 다시 업로드할 때에는 먼저 서버를 종료합니다.
 
-MariaDB_설정 안의 CMD는 SQL 접속, 개별 검사, DB 종료 등 관리용이며 평상시에는 실행하지 않습니다. 기존 SENSOR_ERROR는 센서 측정 문제로 별도로 해결해야 합니다.
+[관리도구](관리도구/)에 SQL 접속, 개별 검사, DB 종료 및 라이브러리 관리용 CMD를 모았습니다. 평상시에는 실행하지 않습니다. 기존 SENSOR_ERROR는 센서 측정 문제로 별도로 해결해야 합니다.
 
 DB는 127.0.0.1:3307 / temperature_alert / measurements. 실제 데이터와 비밀번호는 %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb 아래 보존. 상세: [MariaDB_설정](MariaDB_설정/). 기존 SQLite 데이터는 자동 이전하지 않습니다. 기존 SQLite 기록 조회는 공통 Python으로 server/app.py --backend sqlite 실행.
 
@@ -53,7 +53,7 @@ USB 115200 baud JSON → Python(pyserial) → MariaDB → Flask 웹. 현재 온�
 
 - tests/test_trend.cpp: C++ 온도 변화 및 출력 규칙 단위 테스트. g++ -std=c++11 -Wall -Wextra -pedantic tests/test_trend.cpp -o test_trend 로 컴파일 후 실행.
 - server/test_database.py: SQLite 및 JSON 검증 단위 테스트.
-- MariaDB_설정/test-db.cmd: 설치 PC에서 실제 MariaDB 쓰기/읽기/롤백 확인.
+- 관리도구/test-db.cmd: 설치 PC에서 실제 MariaDB 쓰기/읽기/롤백 확인.
 - 실제 Windows 설치, ESP32 업로드 및 부저 전기적 동작은 별도 검증 필요. 손의 체온이나 실온 공기로 완만하게 온도를 바꾸고 물/결로/불꽃/고온 열풍은 피하세요.
 
 교육용 예제이며 안전 인증 경보 장치가 아닙니다.

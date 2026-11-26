@@ -29,4 +29,4 @@ Windows 10/11 x64, PowerShell 5.1 이상용. 특정 과제와 독립적으로 �
 
 setup.cmd는 setup-all.ps1을 실행하며 Arduino 도구, DHT 라이브러리, Python 3.10 이상(없으면 WinGet으로 3.12 설치), Flask, pyserial, PyMySQL, MariaDB 11.4.14 Windows ZIP을 준비합니다. Docker/WSL은 필요 없습니다. Python 공통 가상환경은 %LOCALAPPDATA%/ESP32SchoolKit/python-env 입니다. 인터넷, WinGet(기존 Python이 없는 경우), 학교 정책 및 드라이버 권한에 따라 실패할 수 있습니다. 각 단계 오류는 화면에 표시됩니다. 실제 Windows 설치는 미검증입니다.
 
-02번은 MariaDB_설정/setup-db.cmd로 DB를 초기화합니다.
+02번은 start-server.cmd로 DB 및 웹 화면을 자동 실행합니다. DB만 초기화하려면 관리도구/setup-db.cmd를 실행합니다.
