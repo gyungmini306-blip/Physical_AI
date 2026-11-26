@@ -1,0 +1,23 @@
+name: physical-ai-temperature
+services:
+  db:
+    image: mariadb:11.4
+    ports:
+      - "127.0.0.1:3307:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:?Run setup-db.cmd first}
+      MARIADB_ROOT_HOST: localhost
+      MARIADB_DATABASE: temperature_alert
+      MARIADB_USER: temperature_app
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:?Run setup-db.cmd first}
+    volumes:
+      - temperature_db:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 15s
+volumes:
+  temperature_db:

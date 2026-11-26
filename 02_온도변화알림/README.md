@@ -98,3 +98,7 @@ DB는 data/temperature.db에 자동 생성됩니다. PC 재부팅 후에도 해�
 - setup-server.cmd, start-server.cmd: Windows 실행 도구
 
 DB 테스트: 과제 폴더에서 `py -3 -m unittest discover -s server -v`. 실제 ESP32/Windows 통합 시험은 별도 필요합니다.
+
+## MariaDB 설정 (선택)
+
+[MariaDB_설정](MariaDB_설정/)에서 DB 서버 및 테이블을 먼저 구성할 수 있습니다. 현재 Flask는 SQLite 기반이며 MariaDB 연동은 후속 단계입니다. 기존 SQLite 실행 방법은 유지합니다.
