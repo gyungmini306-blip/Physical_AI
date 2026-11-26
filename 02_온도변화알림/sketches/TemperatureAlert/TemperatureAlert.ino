@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <esp_system.h>
 #include <DHT.h>
 #include <WiFi.h>
 #include <WebServer.h>
@@ -21,6 +22,10 @@ TrendMonitor monitor;
 uint32_t lastSample = 0, alarmStart = 0, eventCount = 0, lastEventSec = 0;
 bool buzzerOn = false, webReady = false;
 Trend lastEvent = Trend::WarmingUp;
+char bootId[17] = {};
+uint32_t sampleSeq = 0;
+String jsonNumber(float value);
+void emitSample(bool event, uint32_t now);
 
 const char* stateName(Trend state) {
   switch (state) {
@@ -56,9 +61,7 @@ void sampleTemperature(uint32_t now) {
              monitor.state == Trend::Stable) {
     setBuzzer(false);
   }
-  Serial.printf("temperature=%.1f C | delta=%.1f C | %s | alarms=%lu\n",
-                monitor.temperature, monitor.delta, stateName(monitor.state),
-                (unsigned long)eventCount);
+  emitSample(event, now);
 }
 
 const char PAGE[] PROGMEM = R"HTML(<!doctype html>
@@ -108,6 +111,19 @@ String jsonNumber(float value) {
   return isfinite(value) ? String(value, 1) : String("null");
 }
 
+void emitSample(bool event, uint32_t now) {
+  String line = "{\"kind\":\"temperature\",\"boot\":\"";
+  line += bootId;
+  line += "\",\"seq\":"; line += String(++sampleSeq);
+  line += ",\"uptime_ms\":"; line += String(now);
+  line += ",\"temperature\":"; line += jsonNumber(monitor.temperature);
+  line += ",\"delta\":"; line += jsonNumber(monitor.delta);
+  line += ",\"state\":\""; line += stateName(monitor.state);
+  line += "\",\"alarm\":"; line += (event ? "true" : "false");
+  line += "}";
+  Serial.println(line);
+}
+
 void sendStatus() {
   String body = "{\"temperature\":";
   body += jsonNumber(monitor.temperature);
@@ -124,6 +140,7 @@ void sendStatus() {
 
 void setup() {
   Serial.begin(115200);
+  snprintf(bootId, sizeof(bootId), "%08lx%08lx", (unsigned long)esp_random(), (unsigned long)esp_random());
   pinMode(RISE_LED, OUTPUT);
   pinMode(FALL_LED, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);

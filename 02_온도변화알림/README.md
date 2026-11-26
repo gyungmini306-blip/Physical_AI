@@ -65,3 +65,36 @@ g++ -std=c++11 -Wall -Wextra -pedantic tests/test_trend.cpp -o test_trend
 실물 시험: 안정 상태에서 약 33초 대기 → 센서를 손의 체온이나 온도 차이가 있는 공기로 완만히 따뜻하게/차갑게 하여 경보 확인 → 원상 복귀 확인 → DATA 연결 해제 후 오류 표시 확인(배선 변경 시 전원 차단). 물, 불꽃, 고온 열풍, 결로는 피하세요. ESP32 안전경보 인증 제품이 아닌 교육용 예제입니다.
 
 공식 자료: [Adafruit DHT 라이브러리](https://github.com/adafruit/DHT-sensor-library), [ESP32 Wi-Fi API](https://docs.espressif.com/projects/arduino-esp32/en/latest/api/wifi.html).
+
+## PC 데이터베이스 및 웹 서버 (추가)
+
+ESP32는 3초마다 USB 시리얼(115200 baud)로 JSON 측정값을 전송합니다. PC의 Python 서버가 이를 수신하여 SQLite에 저장합니다. 별도 MySQL 설치는 필요 없습니다. ESP32 자체 Wi-Fi 페이지 및 LED/부저는 PC와 독립적으로 동작합니다.
+
+### PC 실행 순서 (Windows)
+
+1. 위 절차로 ESP32에 최신 TemperatureAlert.ino를 업로드합니다.
+2. Python 3.10 이상 설치(없으면 https://www.python.org/downloads/).
+3. 이 폴더의 setup-server.cmd 실행: 가상환경, Flask, pyserial 설치.
+4. Arduino IDE의 시리얼 모니터 및 다른 COM 사용 프로그램을 닫습니다.
+5. start-server.cmd 실행 후 실제 ESP32 COM 포트 입력. 미입력 시 과거 기록만 조회합니다.
+6. PC 브라우저에서 http://127.0.0.1:5000 접속. 종료는 Ctrl+C.
+
+DB는 data/temperature.db에 자동 생성됩니다. PC 재부팅 후에도 해당 파일을 보존하면 기록 유지. 초기화되는 학교 PC에서는 DB를 별도로 백업해야 합니다. 백업은 서버 종료 후 DB 파일을 복사하세요. CSV 다운로드도 가능합니다.
+
+### 저장 항목 및 기능
+
+- 수신 시각(UTC), 부팅 ID, 측정 순번, 부팅 후 경과 시간, 온도, 변화량, 상태, 신규 경보 여부.
+- 부팅 ID + 순번으로 중복 저장 방지; 센서 오류는 온도 NULL로 저장.
+- 최고/최저/평균, 경보 이력, 날짜 필터, 최근 200개 온도 그래프, CSV 내보내기.
+- 수신 중단 시 이전 값을 실시간으로 표시하지 않음; 시리얼 재연결 자동 시도.
+- PC가 꺼져 있거나 USB가 끊긴 동안의 기록은 복구되지 않습니다. 기본 서버 주소는 로컬 PC 전용이며 외부 푸시 알림은 구현하지 않았습니다.
+
+### 추가 파일 및 테스트
+
+- server/app.py: USB 수신 스레드 및 Flask API
+- server/database.py: SQLite 스키마, 입력 검증 및 저장
+- server/templates/index.html, server/static/: 웹 화면
+- server/test_database.py: DB/입력 단위 테스트
+- setup-server.cmd, start-server.cmd: Windows 실행 도구
+
+DB 테스트: 과제 폴더에서 `py -3 -m unittest discover -s server -v`. 실제 ESP32/Windows 통합 시험은 별도 필요합니다.
