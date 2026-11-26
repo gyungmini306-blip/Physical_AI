@@ -3,7 +3,7 @@
 <title>온도 변화 DB 대시보드</title><link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}"></head>
 <body><main><header><h1>온도 변화 모니터링</h1><p>USB 연결 · PC 로컬 데이터베이스</p><p id="connection" role="status">연결 확인 중</p></header>
 <section class="cards"><article>현재 온도<strong id="temp">--</strong></article><article>30초 변화량<strong id="delta">--</strong></article><article>현재 상태<strong id="state">--</strong></article></section>
-<section><h2>경보 출력 기준</h2><div class="cards"><article>온도 상승<strong class="rise">빨간 LED</strong></article><article>온도 하강<strong class="fall">부저 1초</strong></article><article>정상<strong>출력 없음</strong></article></div><p class="hint">표시는 센서 판정 기준이며 실제 LED 및 부저의 전기적 작동을 검증하지 않습니다.</p></section>
+<section><h2>경보 출력 기준</h2><div class="cards"><article>온도 상승<strong class="rise">빨간 LED</strong></article><article>온도 하강<strong class="fall">하강 경보 기록</strong></article><article>정상<strong>출력 없음</strong></article></div><p class="hint">패시브 부저 PWM은 펌웨어 기본값에서 비활성화됩니다. 정격 및 회로 검증 후 활성화할 경우 하강 진입 시 1초 출력합니다. 이 화면은 실제 물리 출력 여부를 확인하지 않습니다.</p></section>
 <section><h2>저장 기록 조회</h2><label>날짜 <input type="date" id="day"></label> <button id="all">전체 기간</button> <a id="csv" href="/api/export.csv">CSV 다운로드</a><p class="hint">날짜는 서버 PC의 현지 시간 기준입니다. 그래프는 최근 최대 200개 측정값을 표시합니다.</p>
 <div class="cards stats"><article>최고<strong id="max">--</strong></article><article>최저<strong id="min">--</strong></article><article>평균<strong id="avg">--</strong></article><article>저장 경보<strong id="count">0</strong></article></div>
 <svg id="graph" viewBox="0 0 680 240" role="img" aria-label="온도 변화 그래프"></svg><p id="graphInfo" class="hint"></p></section>

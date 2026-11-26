@@ -5,12 +5,13 @@
 #include <WebServer.h>
 #include "TrendMonitor.h"
 #include "AlarmOutput.h"
+#include "BuzzerConfig.h"
 
 // DHT11 on GPIO25; red LED on GPIO18; falling alarm on GPIO23.
 constexpr uint8_t DHT_PIN = 25;
 #define DHT_TYPE DHT11
 constexpr uint8_t RISE_LED = 18;
-constexpr uint8_t BUZZER_PIN = 23; // Active-high signal to electrically compatible buzzer driver.
+constexpr uint8_t BUZZER_PIN = 23; // Optional passive piezo PWM; disabled by default.
 constexpr uint32_t SAMPLE_MS = 3000;
 constexpr uint32_t BUZZER_MS = 1000;
 const char* AP_SSID = "Temperature-ESP32";
@@ -20,7 +21,7 @@ DHT dht(DHT_PIN, DHT_TYPE);
 WebServer server(80);
 TrendMonitor monitor;
 uint32_t lastSample = 0, alarmStart = 0, eventCount = 0, lastEventSec = 0;
-bool buzzerOn = false, webReady = false;
+bool buzzerOn = false, buzzerReady = false, webReady = false;
 Trend lastEvent = Trend::WarmingUp;
 char bootId[17] = {};
 uint32_t sampleSeq = 0;
@@ -38,8 +39,17 @@ const char* stateName(Trend state) {
 }
 
 void setBuzzer(bool on) {
-  buzzerOn = on;
-  digitalWrite(BUZZER_PIN, on ? HIGH : LOW);
+  if (!buzzerReady) {
+    buzzerOn = false;
+    return;
+  }
+  if (on) {
+    buzzerOn = ledcWriteTone(BUZZER_PIN, BUZZER_TONE_HZ) != 0;
+    if (!buzzerOn) ledcWrite(BUZZER_PIN, 0);
+  } else {
+    ledcWrite(BUZZER_PIN, 0);
+    buzzerOn = false;
+  }
 }
 
 void sampleTemperature(uint32_t now) {
@@ -73,11 +83,11 @@ h1{font-size:24px}#temp{font-size:42px;font-weight:bold}#state{font-size:20px;fo
 .rise{color:#b91c1c}.fall{color:#1d4ed8}.error{color:#b45309}small{color:#475569}
 </style></head><body><main><h1>ESP32 온도 변화 알림</h1>
 <section><small>현재 온도</small><div id="temp">--</div><div id="delta">30초 변화량: --</div></section>
-<section><small>현재 상태</small><div id="state">연결 중</div><p id="connection"></p></section>
+<section><small>현재 상태</small><div id="state">연결 중</div><p id="connection"></p><p id="buzzerStatus"></p></section>
 <section><div id="count">알림 횟수: 0</div><div id="last">최근 알림: 없음</div></section>
-<small>3초마다 측정 · 약 30초 전 대비 ±2°C · 상승: 빨간 LED / 하강 진입: 부저 1초 · 웹 화면은 1초마다 갱신</small>
+<small>3초마다 측정 · 약 30초 전 대비 ±2°C · 상승: 빨간 LED / 하강 진입: 경보 기록 (부저는 검증 후 활성화) · 웹 화면은 1초마다 갱신</small>
 <script>
-const names={WARMING_UP:'측정 준비 중',STABLE:'정상',RISING:'온도 상승 · 빨간 LED',FALLING:'온도 하강 · 부저 경보',SENSOR_ERROR:'센서 측정 실패'};
+const names={WARMING_UP:'측정 준비 중',STABLE:'정상',RISING:'온도 상승 · 빨간 LED',FALLING:'온도 하강 · 경보',SENSOR_ERROR:'센서 측정 실패'};
 const e=id=>document.getElementById(id);
 const number=v=>typeof v==='number'?v.toFixed(1)+' °C':'--';
 async function poll(){
@@ -97,8 +107,10 @@ async function poll(){
     e('count').textContent='알림 횟수: '+data.eventCount;
     e('last').textContent=data.eventCount?'최근 알림: '+names[data.lastEvent]+' (부팅 후 '+data.lastEventSec+'초)':'최근 알림: 없음';
     e('connection').textContent='ESP32 연결됨';
+    e('buzzerStatus').textContent=data.buzzerEnabled?'부저 PWM 활성화 (물리 출력 미검증)':'부저 출력 비활성화';
   }catch(err){
     e('connection').textContent='연결 끊김 — Wi-Fi 확인';
+    e('buzzerStatus').textContent='부저 상태 확인 불가';
     e('temp').textContent='--';e('delta').textContent='30초 변화량: --';
     e('state').textContent='연결 오류';e('state').className='error';
   }finally{setTimeout(poll,1000);}
@@ -132,6 +144,7 @@ void sendStatus() {
   body += "\",\"eventCount\":"; body += String(eventCount);
   body += ",\"lastEvent\":\""; body += stateName(lastEvent);
   body += "\",\"lastEventSec\":"; body += String(lastEventSec);
+  body += ",\"buzzerEnabled\":"; body += (buzzerReady ? "true" : "false");
   body += "}";
   server.sendHeader("Cache-Control", "no-store");
   server.send(200, "application/json", body);
@@ -141,9 +154,19 @@ void setup() {
   Serial.begin(115200);
   snprintf(bootId, sizeof(bootId), "%08lx%08lx", (unsigned long)esp_random(), (unsigned long)esp_random());
   pinMode(RISE_LED, OUTPUT);
-  pinMode(BUZZER_PIN, OUTPUT);
+  // No driven signal on GPIO23 while hardware compatibility is unknown.
+  pinMode(BUZZER_PIN, INPUT);
   digitalWrite(RISE_LED, LOW);
-  setBuzzer(false);
+  if (PASSIVE_BUZZER_ENABLED) {
+    buzzerReady = ledcAttach(BUZZER_PIN, BUZZER_TONE_HZ, 8);
+    if (buzzerReady) setBuzzer(false);
+    else {
+      pinMode(BUZZER_PIN, INPUT);
+      Serial.println("Buzzer PWM init failed; output disabled.");
+    }
+  } else {
+    Serial.println("Buzzer disabled: hardware verification required.");
+  }
   dht.begin();
   WiFi.mode(WIFI_AP);
   webReady = WiFi.softAP(AP_SSID, AP_PASSWORD);
