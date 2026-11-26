@@ -17,8 +17,8 @@ Windows 10/11 x64, PowerShell 5.1 이상용. 특정 과제와 독립적으로 �
 저장소 루트의 명령 프롬프트에서 예:
 
 ```bat
-00_ArduinoSetup\check-build.cmd
-00_ArduinoSetup\check-build.cmd 01_SmartHomeCare\sketches\SmartHomeCare
+00_아두이노설치\check-build.cmd
+00_아두이노설치\check-build.cmd 01_스마트홈케어\sketches\SmartHomeCare
 ```
 
 도구 저장 위치: `%LOCALAPPDATA%\ESP32SchoolKit`. ESP32 Core는 Arduino15에 설치합니다. 드라이버는 관리자 승인 및 학교 정책 허용이 필요할 수 있습니다. 보드에서 GPIO에 5V 신호를 직접 입력하지 마세요.

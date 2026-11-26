@@ -1,6 +1,6 @@
-# 01_SmartHomeCare — PIR/IR 센서 실습
+# 01_스마트홈케어 — PIR/IR 센서 실습
 
-공통 Arduino 개발환경은 [00_ArduinoSetup](../00_ArduinoSetup/)에서 설치합니다. 설치 후 원하는 스케치를 Arduino IDE로 열고 ESP32 Dev Module 및 실제 COM 포트를 선택합니다. 시리얼 모니터: 115200 baud.
+공통 Arduino 개발환경은 [00_아두이노설치](../00_아두이노설치/)에서 설치합니다. 설치 후 원하는 스케치를 Arduino IDE로 열고 ESP32 Dev Module 및 실제 COM 포트를 선택합니다. 시리얼 모니터: 115200 baud.
 
 - 기본형: `sketches/SmartHomeCare/SmartHomeCare.ino`
 - Wi-Fi 및 부저 버전: 아래 링크

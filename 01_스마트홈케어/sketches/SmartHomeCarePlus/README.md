@@ -18,7 +18,7 @@
 
 ## 사용법
 
-1. [공통 설치기](../../../00_ArduinoSetup/)의 `setup.cmd`로 Arduino 개발환경을 설치합니다.
+1. [공통 설치기](../../../00_아두이노설치/)의 `setup.cmd`로 Arduino 개발환경을 설치합니다.
 2. Arduino IDE에서 `SmartHomeCarePlus.ino`를 열고 **ESP32 Dev Module** 및 USB COM 포트를 선택합니다.
 3. 코드를 ESP32에 업로드한 후 시리얼 모니터를 **115200**으로 엽니다.
 4. 스마트폰 Wi-Fi 설정에서 **HomeCare-ESP32** 네트워크에 연결합니다.

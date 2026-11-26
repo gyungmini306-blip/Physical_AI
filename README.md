@@ -4,14 +4,14 @@ ESP32 기반 Physical AI 수업 과제 저장소입니다. 공통 개발 환경�
 
 | 폴더 | 역할 | 상태 |
 |---|---|---|
-| [00_ArduinoSetup](00_ArduinoSetup/) | Windows Arduino IDE, CLI, ESP32 Core, CP210x 드라이버 설치 | 기존 설치기 분리; Windows 재검증 필요 |
-| [01_SmartHomeCare](01_SmartHomeCare/) | PIR/IR, LED, Wi-Fi, 부저, USB/BLE 실습 | 기존 코드 보존 |
-| [02_TemperatureAlert](02_TemperatureAlert/) | 온도 상승·하강 알림 | 개발 예정 |
+| [00_아두이노설치](00_아두이노설치/) | Windows Arduino IDE, CLI, ESP32 Core, CP210x 드라이버 설치 | 기존 설치기 분리; Windows 재검증 필요 |
+| [01_스마트홈케어](01_스마트홈케어/) | PIR/IR, LED, Wi-Fi, 부저, USB/BLE 실습 | 기존 코드 보존 |
+| [02_온도변화알림](02_온도변화알림/) | 온도 상승·하강 알림 | 개발 예정 |
 
 ## 사용 순서
 
 1. 저장소를 ZIP으로 다운로드하거나 clone합니다.
-2. `00_ArduinoSetup/setup.cmd`를 실행합니다. 설치된 PC에서는 반복 설치할 필요가 없습니다.
+2. `00_아두이노설치/setup.cmd`를 실행합니다. 설치된 PC에서는 반복 설치할 필요가 없습니다.
 3. 해당 과제의 README를 읽고 Arduino IDE에서 원하는 스케치를 엽니다.
 4. ESP32 Dev Module과 실제 COM 포트를 선택해 업로드합니다.
 

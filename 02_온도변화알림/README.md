@@ -1,7 +1,7 @@
-# 02_TemperatureAlert — 온도 상승·하강 알림
+# 02_온도변화알림 — 온도 상승·하강 알림
 
 상태: 개발 예정. 온도 센서, 알림 조건(절대 온도 또는 변화량), 출력/전송 방식은 아직 미확정입니다.
 
-공통 개발환경: [00_ArduinoSetup](../00_ArduinoSetup/). 과제 전용 설치기는 만들지 않습니다.
+공통 개발환경: [00_아두이노설치](../00_아두이노설치/). 과제 전용 설치기는 만들지 않습니다.
 
 구현 위치: [sketches/TemperatureAlert](sketches/TemperatureAlert/). 센서와 알림 요구사항 확인 후 Arduino 코드를 추가합니다.
