@@ -1,35 +1,10 @@
-# 학교 PC용 ESP32 자동 설치기
+# 01_SmartHomeCare — PIR/IR 센서 실습
 
-Windows 10/11 x64에서 Arduino 개발환경을 다시 구축하는 실습용 스크립트입니다. 학교 PC가 매번 초기화되는 경우 반복 실행할 수 있습니다.
+공통 Arduino 개발환경은 [00_ArduinoSetup](../00_ArduinoSetup/)에서 설치합니다. 설치 후 원하는 스케치를 Arduino IDE로 열고 ESP32 Dev Module 및 실제 COM 포트를 선택합니다. 시리얼 모니터: 115200 baud.
 
-## 실행 방법
-
-1. 저장소에서 **Code → Download ZIP**을 눌러 다운로드하고 압축을 풉니다.
-2. `esp32-school-setup/setup.cmd`를 더블클릭합니다.
-3. 설치가 끝나면 Arduino IDE에서 **ESP32 Dev Module**과 실제 CP210x USB 포트(COM 번호)를 선택합니다.
-4. ESP32 업로드 후 시리얼 모니터 속도를 **115200 baud**로 지정합니다.
-
-## 설치 대상
-
-| 항목 | 버전 |
-|---|---|
-| Arduino IDE (ZIP 압축 해제 방식) | 2.3.10 |
-| Arduino CLI | 1.5.1 |
-| ESP32 보드 패키지 | Espressif 3.3.12 |
-| CP210x USB to UART 드라이버 | Silicon Labs 공식 버전 |
-| 보드 | ESP32 Dev Module |
-
-개발 도구는 주로 `%LOCALAPPDATA%\ESP32SchoolKit`에 저장됩니다. ESP32 Core는 사용자 Arduino15 경로에 설치됩니다. 인터넷 접근과 저장 공간이 필요합니다.
-
-**학교 관리자 권한이 제한되어 있다면 CP210x 드라이버 설치가 실패할 수 있습니다.** 이 경우 학교 전산 담당자에게 설치를 요청해야 합니다. 본 스크립트는 관리자 정책을 우회하지 않습니다.
-
-## 파일
-
-- `setup.cmd` — 더블클릭 설치 실행
-- `setup.ps1` — 공식 프로그램 다운로드, 압축 해제, ESP32 Core 설치, CP210x 드라이버 설치 시도, 컴파일 검사
-- `launch-ide.cmd` — Arduino IDE 실행
-- `check-build.cmd` — 소스코드 컴파일 확인
-- `sketches/SmartHomeCare/SmartHomeCare.ino` — PIR/IR/LED 센서 실습 코드
+- 기본형: `sketches/SmartHomeCare/SmartHomeCare.ino`
+- Wi-Fi 및 부저 버전: 아래 링크
+- USB/BLE: [esp32-dual-connection](esp32-dual-connection/)
 
 ## GPIO 연결
 
@@ -57,8 +32,8 @@ ESP32 GPIO에 5V를 직접 입력하면 손상 위험이 있습니다. 전원/�
 
 - 코드: [`sketches/SmartHomeCarePlus/SmartHomeCarePlus.ino`](sketches/SmartHomeCarePlus/SmartHomeCarePlus.ino)
 - 사용법: [`sketches/SmartHomeCarePlus/README.md`](sketches/SmartHomeCarePlus/README.md)
-- `setup.cmd`는 기존 원본 예제를 검사합니다. PLUS를 올리려면 Arduino IDE에서 PLUS 스케치를 직접 열어 업로드해야 합니다.
-- `check-build.cmd`는 원본과 PLUS 두 예제를 컴파일합니다.
+- 공통 설치기는 독립적인 SetupCheck를 검사합니다. PLUS는 Arduino IDE에서 직접 열어 업로드합니다.
+- 공통 설치기의 `check-build.cmd`에 각 스케치 폴더를 전달해 컴파일할 수 있습니다.
 - PLUS 스마트폰 연결: `HomeCare-ESP32` / `homecare2026` → `http://192.168.4.1` (교실 시연용 공개 기본 비밀번호)
 - 동시 센서 감지는 실제 사고나 위험을 판정하지 않으며, 학습용 상태 표시입니다.
 
@@ -67,4 +42,4 @@ ESP32 GPIO에 5V를 직접 입력하면 손상 위험이 있습니다. 전원/�
 
 - [SmartHomeCarePlusBuzzer.ino](sketches/SmartHomeCarePlusBuzzer/SmartHomeCarePlusBuzzer.ino): PIR+IR 동시 감지 시 부저 경보를 발생시키고 웹의 주의 알림 확인 전까지 유지합니다.
 - [2핀 부저 종류별 연결·설정 안내](sketches/SmartHomeCarePlusBuzzer/README.md): 액티브/패시브 부저 판별 및 구동 회로 주의사항. 부저 정격 확인 전 GPIO에 직접 연결하지 마세요.
-- 기존 `SmartHomeCarePlus.ino`는 변경하지 않았습니다. `check-build.cmd`에서 세 가지 예제를 모두 컴파일할 수 있습니다.
+- 기존 `SmartHomeCarePlus.ino`는 변경하지 않았습니다. 공통 설치기의 `check-build.cmd`에 각 스케치 폴더를 전달해 컴파일할 수 있습니다.

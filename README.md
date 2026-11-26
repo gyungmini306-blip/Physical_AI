@@ -1,25 +1,18 @@
-# Physical_AI — ESP32 Smart Home Care
+# Physical_AI
 
-학교 PC가 부팅 시 초기화되는 환경을 위한 ESP32 개발환경 자동 설치 프로젝트입니다.
+ESP32 기반 Physical AI 수업 과제 저장소입니다. 공통 개발 환경은 한 번 설치하고 과제별 코드는 별도로 관리합니다.
 
-## 학교에서 사용하기
+| 폴더 | 역할 | 상태 |
+|---|---|---|
+| [00_ArduinoSetup](00_ArduinoSetup/) | Windows Arduino IDE, CLI, ESP32 Core, CP210x 드라이버 설치 | 기존 설치기 분리; Windows 재검증 필요 |
+| [01_SmartHomeCare](01_SmartHomeCare/) | PIR/IR, LED, Wi-Fi, 부저, USB/BLE 실습 | 기존 코드 보존 |
+| [02_TemperatureAlert](02_TemperatureAlert/) | 온도 상승·하강 알림 | 개발 예정 |
 
-1. 이 저장소에서 **Code → Download ZIP**을 눌러 내려받고 압축을 풉니다.
-2. `esp32-school-setup/setup.cmd`를 더블클릭합니다.
-3. 인터넷 연결 상태에서 Arduino IDE 2.3.10, Arduino CLI 1.5.1, Espressif ESP32 Core 3.3.12를 사용자 계정 영역에 구성합니다.
-4. CP210x 드라이버 설치는 **관리자 권한 및 학교 PC 정책 허용이 필요**합니다. 설치가 막히면 학교 전산실에 문의해야 합니다.
-5. Arduino IDE에서 **ESP32 Dev Module**과 **실제 CP210x COM 포트**를 선택합니다. `COM1`은 실제 보드 포트인지 확인하기 전에는 선택하지 마세요.
+## 사용 순서
 
-실행: `esp32-school-setup/setup.cmd`  
-코드: `esp32-school-setup/sketches/SmartHomeCare/SmartHomeCare.ino`  
-확인용 컴파일: `esp32-school-setup/check-build.cmd`
+1. 저장소를 ZIP으로 다운로드하거나 clone합니다.
+2. `00_ArduinoSetup/setup.cmd`를 실행합니다. 설치된 PC에서는 반복 설치할 필요가 없습니다.
+3. 해당 과제의 README를 읽고 Arduino IDE에서 원하는 스케치를 엽니다.
+4. ESP32 Dev Module과 실제 COM 포트를 선택해 업로드합니다.
 
-## 목적과 한계
-
-- Windows 10/11 x64 및 PowerShell 5.1 이상 환경을 대상으로 합니다.
-- 매번 초기화되는 학교 PC에서는 매회 재설치 및 다운로드가 필요할 수 있습니다. 학교 인터넷/권한 제한에 따라 실패할 수 있습니다.
-- **Docker 설치는 필요하지 않습니다.** Arduino IDE/CLI는 PC에서 실행하고, ESP32에 직접 업로드합니다.
-- 프로그램은 PIR(GPIO25), IR(GPIO26), 녹색 LED(GPIO18), 노란색 LED(GPIO19)의 센서 신호를 표시하는 실습 예제이며, 실제 안전 경보 장치로 사용하지 마세요.
-- GPIO에 5V 신호를 직접 인가하지 마세요. CP210x USB 드라이버는 Windows용이며 USB 2.0 드라이버와 별개입니다.
-
-자세한 절차는 [`esp32-school-setup/README.md`](esp32-school-setup/README.md)에 있습니다.
+학교 PC 초기화 또는 드라이버 권한 제한 시 재설치/관리자 승인이 필요할 수 있습니다. 센서 실습은 안전 인증 제품이 아닙니다.

@@ -11,7 +11,7 @@ $IdeDir = Join-Path $Apps 'arduino-ide'
 $CliDir = Join-Path $Apps 'arduino-cli'
 $DriverDir = Join-Path $Apps 'cp210x'
 $Cli = Join-Path $CliDir 'arduino-cli.exe'
-$Sketch = Join-Path $ScriptDir 'sketches\SmartHomeCare'
+$Sketch = Join-Path $ScriptDir 'sketches\SetupCheck'
 $BoardUrl = 'https://espressif.github.io/arduino-esp32/package_esp32_index.json'
 $IdeZip = Join-Path $Cache 'arduino-ide_2.3.10_Windows_64bit.zip'
 $CliZip = Join-Path $Cache 'arduino-cli_1.5.1_Windows_64bit.zip'
@@ -136,13 +136,13 @@ try {
       Write-Warning 'Contact school IT if you cannot approve driver installation.'
     }
   }
-  Say '5/5 Compile SmartHomeCare sketch'
+  Say '5/5 Compile independent SetupCheck sketch'
   & $Cli compile --fqbn esp32:esp32:esp32 $Sketch
   if ($LASTEXITCODE -ne 0) { throw 'Sketch compilation failed.' }
   Say 'IDE and ESP32 compiler are ready.'
   Say 'Choose Board: ESP32 Dev Module; choose the actual CP210x COM port.'
   Say 'USB uploading needs a functioning CP210x driver and a connected ESP32.'
-  Start-Process -FilePath $ideExe -ArgumentList ('"' + (Join-Path $Sketch 'SmartHomeCare.ino') + '"')
+  Start-Process -FilePath $ideExe
   exit 0
 } catch {
   Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
