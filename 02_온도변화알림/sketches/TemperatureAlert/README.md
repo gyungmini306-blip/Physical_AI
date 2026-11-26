@@ -1,3 +1,3 @@
-# TemperatureAlert sketch
+# TemperatureAlert
 
-온도 센서, 상승·하강 판정 기준 및 알림 방식이 확정되면 `TemperatureAlert.ino`를 추가합니다. 아직 업로드할 코드가 없습니다.
+Arduino IDE에서 TemperatureAlert.ino를 열면 됩니다. TrendMonitor.h는 같은 폴더에 유지하세요. 배선, 라이브러리 및 사용법은 [과제 README](../../README.md)를 참고하세요.
