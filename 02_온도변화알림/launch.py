@@ -1,5 +1,6 @@
 """One-click Windows launcher for the temperature monitoring assignment."""
 import argparse
+import os
 import re
 import socket
 import subprocess
@@ -39,7 +40,36 @@ def main():
     parser = argparse.ArgumentParser(description="Start MariaDB and temperature dashboard")
     parser.add_argument("port", nargs="?", help="Optional manual COM port")
     parser.add_argument("--history", action="store_true", help="View saved data without USB")
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument("--ide", action="store_true", help="Open Arduino sketch")
+    modes.add_argument("--db", choices=["start","check","console","selftest","stop"], help="MariaDB management")
+    modes.add_argument("--menu", action="store_true", help="Show optional maintenance menu")
     args = parser.parse_args()
+    if args.menu:
+        print("1. Live dashboard\n2. Open Arduino sketch\n3. Saved history\n4. SQL console\n5. Test database\n6. Stop database\n0. Exit")
+        choice = input("Select: ").strip()
+        if choice == "0": return 0
+        if choice == "2": args.ide = True
+        elif choice == "3": args.history = True
+        elif choice == "4": args.db = "console"
+        elif choice == "5": args.db = "selftest"
+        elif choice == "6": args.db = "stop"
+        elif choice != "1": raise RuntimeError("Unknown menu selection.")
+    if (args.ide or args.db) and (args.history or args.port):
+        parser.error("Choose a single action.")
+    if args.ide:
+        kit = Path(os.environ["LOCALAPPDATA"]) / "ESP32SchoolKit"
+        ide = next((kit / "apps" / "arduino-ide").rglob("Arduino IDE.exe"), None)
+        if ide is None: raise RuntimeError("Arduino IDE not found.")
+        sketch = ROOT / "sketches" / "TemperatureAlert" / "TemperatureAlert.ino"
+        subprocess.Popen([str(ide), str(sketch)], cwd=sketch.parent)
+        print("Arduino IDE opened; select ESP32 Dev Module and actual COM port; upload manually.")
+        return 0
+    if args.db:
+        script = ROOT / "MariaDB_설정" / "native_db.py"
+        if args.db in ("console","selftest"):
+            subprocess.run([sys.executable, str(script), "start"], check=True)
+        return subprocess.call([sys.executable, str(script), args.db])
     from serial.tools import list_ports
     if args.history and args.port:
         parser.error("--history and COM port cannot be combined")

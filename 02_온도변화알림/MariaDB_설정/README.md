@@ -1,27 +1,18 @@
 # MariaDB 설정 (Windows 직접 실행)
 
-Docker/WSL은 필요 없습니다. 먼저 00번의 setup.cmd를 실행해 공통 Arduino/Python/MariaDB 환경을 설치합니다.
+과제 상위 start-server.cmd 하나로 환경 설치, DB 시작, USB 수신, 웹 화면 실행을 처리합니다. Docker/WSL 불필요.
 
-1. ../관리도구/setup-db.cmd: MariaDB 초기화, 실행, DB 및 계정/테이블 생성.
-2. ../관리도구/check-db.cmd: 실제 연결 및 테이블 조회 확인.
-3. ../관리도구/connect-db.cmd: SQL 콘솔 (credentials.json의 app_password 입력).
-4. ../관리도구/stop-db.cmd: DB 종료, 데이터 유지.
-평소에는 상위 폴더 start-server.cmd만 실행하면 DB 시작, COM 포트 감지, USB 데이터 저장, PC 웹 화면 열기가 자동으로 진행됩니다. 위 개별 CMD는 관리 및 진단용입니다.
+CMD 명령 프롬프트에서 같은 실행 파일에 옵션을 추가할 수 있습니다.
 
-| 항목 | 값 |
+| 명령 | 용도 |
 |---|---|
-| 호스트 | 127.0.0.1 |
-| 포트 | 3307 |
-| DB | temperature_alert |
-| 사용자 | temperature_app |
-| 비밀번호 | %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb/credentials.json의 app_password |
+| start-server.cmd | 실시간 모니터링 |
+| start-server.cmd --history | 기존 기록만 조회 |
+| start-server.cmd --db start | DB 시작 |
+| start-server.cmd --db check | DB 연결 확인 |
+| start-server.cmd --db console | SQL 콘솔 (app_password 입력) |
+| start-server.cmd --db selftest | 실제 INSERT/SELECT/ROLLBACK 테스트 |
+| start-server.cmd --db stop | DB 종료 (웹 서버부터 종료) |
+| start-server.cmd --menu | 관리 메뉴 |
 
-MariaDB 11.4.14 Windows ZIP 배포판 사용. 데이터 및 비밀번호는 %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb/ 아래에 저장됩니다. 학교 PC가 초기화되면 별도로 백업해야 합니다. 비밀번호 파일은 공유/업로드하지 마세요. 서버는 로컬에서만 수신합니다. 포트가 이미 사용 중이면 중단합니다. 기존 Docker 데이터와 SQLite 데이터는 자동 이전하지 않습니다.
-
-compose.yaml 및 setup-docker.ps1은 이전 Docker 방식의 참고용입니다. 기본 실행 경로는 네이티브입니다. Windows 직접 실행과 실제 센서 연동은 아직 검증하지 않았습니다.
-
-공식 문서: https://mariadb.com/docs/server/server-management/install-and-upgrade-mariadb/installing-mariadb/binary-packages/installing-mariadb-windows-zip-packages
-
-## 실제 DB 검증
-
-관리도구/setup-db.cmd 이후 관리도구/test-db.cmd를 실행하면 실제 INSERT, SELECT, ROLLBACK을 확인합니다. 테스트 행은 남기지 않습니다. start-server.cmd는 PC 브라우저를 자동으로 엽니다.
+호스트 127.0.0.1, 포트 3307, DB temperature_alert, 사용자 temperature_app. MariaDB 11.4.14 ZIP 배포판. 데이터와 비밀번호는 %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb/ 아래 기존 위치 그대로 유지합니다. credentials.json은 공유하지 마세요. 기존 SQLite 및 Docker DB의 자동 마이그레이션은 없습니다. SQL 예제는 queries.sql 참고. 실제 센서 동작과 변경된 원클릭 Windows 실행은 별도 확인 필요.

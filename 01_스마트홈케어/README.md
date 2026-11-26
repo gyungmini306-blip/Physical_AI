@@ -1,6 +1,8 @@
 # 01_스마트홈케어 — PIR/IR 센서 실습
 
-공통 Arduino 개발환경은 [00_아두이노설치](../00_아두이노설치/)에서 설치합니다. 설치 후 원하는 스케치를 Arduino IDE로 열고 ESP32 Dev Module 및 실제 COM 포트를 선택합니다. 시리얼 모니터: 115200 baud.
+**run.cmd**만 실행하면 Arduino IDE/CLI, ESP32 Core, CP210x, Python 및 USB/BLE 라이브러리를 준비한 뒤 예제 선택 메뉴를 엽니다. 00번 폴더는 필요 없습니다. 이미 설치된 도구는 재사용합니다. 예제 선택 후 Arduino IDE에서 ESP32 Dev Module과 실제 COM 포트를 선택해 수동 업로드합니다. 시리얼 모니터: 115200 baud.
+
+메뉴 1~4는 각 Arduino 스케치를 열고, 5는 USB/BLE PC 화면, 6은 BLE 전용 PC 화면입니다. PC 화면은 메뉴 4의 스케치를 먼저 업로드하고 시리얼 모니터를 닫은 뒤 실행합니다.
 
 - 기본형: `sketches/SmartHomeCare/SmartHomeCare.ino`
 - Wi-Fi 및 부저 버전: 아래 링크
@@ -32,8 +34,7 @@ ESP32 GPIO에 5V를 직접 입력하면 손상 위험이 있습니다. 전원/�
 
 - 코드: [`sketches/SmartHomeCarePlus/SmartHomeCarePlus.ino`](sketches/SmartHomeCarePlus/SmartHomeCarePlus.ino)
 - 사용법: [`sketches/SmartHomeCarePlus/README.md`](sketches/SmartHomeCarePlus/README.md)
-- 공통 설치기는 독립적인 SetupCheck를 검사합니다. PLUS는 Arduino IDE에서 직접 열어 업로드합니다.
-- 공통 설치기의 `check-build.cmd`에 각 스케치 폴더를 전달해 컴파일할 수 있습니다.
+- run.cmd의 메뉴 2에서 PLUS를 열고 Arduino IDE에서 컴파일/업로드합니다.
 - PLUS 스마트폰 연결: `HomeCare-ESP32` / `homecare2026` → `http://192.168.4.1` (교실 시연용 공개 기본 비밀번호)
 - 동시 센서 감지는 실제 사고나 위험을 판정하지 않으며, 학습용 상태 표시입니다.
 
@@ -42,4 +43,4 @@ ESP32 GPIO에 5V를 직접 입력하면 손상 위험이 있습니다. 전원/�
 
 - [SmartHomeCarePlusBuzzer.ino](sketches/SmartHomeCarePlusBuzzer/SmartHomeCarePlusBuzzer.ino): PIR+IR 동시 감지 시 부저 경보를 발생시키고 웹의 주의 알림 확인 전까지 유지합니다.
 - [2핀 부저 종류별 연결·설정 안내](sketches/SmartHomeCarePlusBuzzer/README.md): 액티브/패시브 부저 판별 및 구동 회로 주의사항. 부저 정격 확인 전 GPIO에 직접 연결하지 마세요.
-- 기존 `SmartHomeCarePlus.ino`는 변경하지 않았습니다. 공통 설치기의 `check-build.cmd`에 각 스케치 폴더를 전달해 컴파일할 수 있습니다.
+- 기존 `SmartHomeCarePlus.ino`는 변경하지 않았습니다. run.cmd 메뉴 3에서 Arduino IDE로 컴파일/업로드할 수 있습니다.

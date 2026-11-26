@@ -28,7 +28,9 @@ DHT11을 3초마다 측정하고 약 30초 전과 비교합니다. 기존 판정
 
 ## Windows 실행 (Docker/WSL 불필요)
 
-처음 한 번만 00_아두이노설치/setup.cmd로 공통 환경을 설치하고 TemperatureAlert.ino를 ESP32에 업로드합니다. 이미 설치 및 업로드를 완료했다면 반복하지 않습니다.
+**start-server.cmd** 하나가 Arduino IDE/CLI, ESP32 Core, CP210x, DHT 라이브러리, Python, Flask, pyserial, PyMySQL, Windows MariaDB를 검사하고 누락된 항목을 설치합니다. 00번 폴더는 필요 없습니다. 기존 설치와 DB는 그대로 재사용합니다.
+
+보드에 최신 스케치가 없는 경우 먼저 Arduino IDE에서 TemperatureAlert.ino를 수동 업로드하세요. 명령 프롬프트에서 `start-server.cmd --ide`를 실행하면 설치 후 스케치가 열립니다. 자동 업로드로 다른 과제 펌웨어를 덮어쓰지 않습니다.
 
 ### 평소에는 한 번만 클릭
 
@@ -39,9 +41,9 @@ CP210x COM 포트 자동 감지, MariaDB 시작/초기화/연결 확인, Python 
 
 웹 주소: http://127.0.0.1:5000. 사용 중 CMD 창을 유지하고 종료는 Ctrl+C. MariaDB는 종료하지 않으며 데이터도 보존합니다. 다시 업로드할 때에는 먼저 서버를 종료합니다.
 
-[관리도구](관리도구/)에 SQL 접속, 개별 검사, DB 종료 및 라이브러리 관리용 CMD를 모았습니다. 평상시에는 실행하지 않습니다. 기존 SENSOR_ERROR는 센서 측정 문제로 별도로 해결해야 합니다.
+관리용 CMD는 삭제했습니다. 필요한 경우 같은 CMD를 명령 프롬프트에서 `start-server.cmd --menu` (관리 메뉴), `start-server.cmd --db console` (SQL), `start-server.cmd --db selftest` (DB 검증), `start-server.cmd --db stop` (DB 종료, 먼저 웹 서버 종료)로 실행합니다. 기존 SENSOR_ERROR는 센서 측정 문제로 별도로 해결해야 합니다.
 
-DB는 127.0.0.1:3307 / temperature_alert / measurements. 실제 데이터와 비밀번호는 %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb 아래 보존. 상세: [MariaDB_설정](MariaDB_설정/). 기존 SQLite 데이터는 자동 이전하지 않습니다. 기존 SQLite 기록 조회는 공통 Python으로 server/app.py --backend sqlite 실행.
+DB는 127.0.0.1:3307 / temperature_alert / measurements. 실제 데이터와 비밀번호는 %LOCALAPPDATA%/ESP32SchoolKit/temperature-mariadb 아래 보존. 상세: [MariaDB_설정](MariaDB_설정/). 기존 SQLite 데이터는 자동 이전하지 않습니다. 기존 SQLite 기록 조회는 자동 설치된 Python 환경으로 server/app.py --backend sqlite 실행.
 
 ## PC 웹 화면
 
@@ -53,7 +55,7 @@ USB 115200 baud JSON → Python(pyserial) → MariaDB → Flask 웹. 현재 온�
 
 - tests/test_trend.cpp: C++ 온도 변화 및 출력 규칙 단위 테스트. g++ -std=c++11 -Wall -Wextra -pedantic tests/test_trend.cpp -o test_trend 로 컴파일 후 실행.
 - server/test_database.py: SQLite 및 JSON 검증 단위 테스트.
-- 관리도구/test-db.cmd: 설치 PC에서 실제 MariaDB 쓰기/읽기/롤백 확인.
+- start-server.cmd --db selftest: 설치 PC에서 실제 MariaDB 쓰기/읽기/롤백 확인.
 - 실제 Windows 설치, ESP32 업로드 및 부저 전기적 동작은 별도 검증 필요. 손의 체온이나 실온 공기로 완만하게 온도를 바꾸고 물/결로/불꽃/고온 열풍은 피하세요.
 
 교육용 예제이며 안전 인증 경보 장치가 아닙니다.

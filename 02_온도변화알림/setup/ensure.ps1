@@ -31,19 +31,29 @@ function Find-Python {
     }
     return $null
 }
-Step '1/4 Arduino IDE / CLI / ESP32 / CP210x' {
-    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'setup.ps1')
+Step 'Arduino IDE / CLI / ESP32 / CP210x' {
+    & powershell.exe -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'arduino.ps1')
     if ($LASTEXITCODE -ne 0) { throw 'Arduino setup failed; see its install.log.' }
 }
 Step '2/4 DHT sensor libraries' {
     $cli = Join-Path $apps 'arduino-cli\arduino-cli.exe'
     if (!(Test-Path -LiteralPath $cli)) { throw 'Arduino CLI missing.' }
-    & $cli lib update-index
-    if ($LASTEXITCODE -ne 0) { throw 'Library index update failed.' }
-    & $cli lib install 'DHT sensor library' 'Adafruit Unified Sensor'
-    if ($LASTEXITCODE -ne 0) { throw 'DHT library setup failed.' }
+    $libs = (& $cli lib list | Out-String)
+    if ($LASTEXITCODE -ne 0 -or $libs -notmatch 'DHT sensor library' -or $libs -notmatch 'Adafruit Unified Sensor') {
+        & $cli lib update-index
+        if ($LASTEXITCODE -ne 0) { throw 'Library index update failed.' }
+        & $cli lib install 'DHT sensor library' 'Adafruit Unified Sensor'
+        if ($LASTEXITCODE -ne 0) { throw 'DHT library setup failed.' }
+    } else { Write-Host 'DHT libraries already installed.' }
 }
 Step '3/4 Python / Flask / pyserial / PyMySQL' {
+    $vp = Join-Path $venv 'Scripts\python.exe'
+    $ready = $false
+    if (Test-Path -LiteralPath $vp) {
+        & $vp -c "import sys; assert sys.version_info >= (3,10); import flask,serial,pymysql,sqlite3" 2>$null
+        $ready = ($LASTEXITCODE -eq 0)
+    }
+    if ($ready) { Write-Host 'Python dependencies already installed.'; return }
     $python = Find-Python
     if (!$python) {
         if (!(Get-Command winget -ErrorAction SilentlyContinue)) { throw 'Python 3.10+ and WinGet unavailable. Install Python from python.org and run setup again.' }
@@ -56,7 +66,7 @@ Step '3/4 Python / Flask / pyserial / PyMySQL' {
         & $python -m venv $venv
         if ($LASTEXITCODE -ne 0) { throw 'Python environment creation failed.' }
     }
-    & $vp -m pip install -r (Join-Path $PSScriptRoot 'requirements.txt')
+    & $vp -m pip install -r (Join-Path $PSScriptRoot '..\server\requirements.txt')
     if ($LASTEXITCODE -ne 0) { throw 'Python dependency installation failed.' }
     & $vp -c "import flask,serial,pymysql,sqlite3; print('Python dependencies OK')"
     if ($LASTEXITCODE -ne 0) { throw 'Python import check failed.' }
@@ -87,5 +97,5 @@ if ($failures.Count) {
     Write-Host ('FAILED: ' + ($failures -join ', ')) -ForegroundColor Red
     exit 1
 }
-Write-Host 'Common setup completed. Run the assignment MariaDB setup next.' -ForegroundColor Green
+Write-Host 'Assignment environment ready.' -ForegroundColor Green
 exit 0

@@ -1,17 +1,15 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-title Temperature Alert - USB / MariaDB / Dashboard
+title Temperature Alert - USB / MariaDB
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0setup\ensure.ps1"
+if errorlevel 1 goto fail
 set "PY=%LOCALAPPDATA%\ESP32SchoolKit\python-env\Scripts\python.exe"
-if not exist "%PY%" (
- echo First-time setup required: 00_ Arduino setup.cmd
- pause
- exit /b 1
-)
 "%PY%" "%~dp0launch.py" %*
 set "RESULT=%ERRORLEVEL%"
-if not "%RESULT%"=="0" (
- echo Startup failed. See error above.
- pause
-)
+if not "%RESULT%"=="0" pause
 exit /b %RESULT%
+:fail
+echo Environment setup failed. Review the messages above.
+pause
+exit /b 1

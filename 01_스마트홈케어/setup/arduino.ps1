@@ -11,7 +11,6 @@ $IdeDir = Join-Path $Apps 'arduino-ide'
 $CliDir = Join-Path $Apps 'arduino-cli'
 $DriverDir = Join-Path $Apps 'cp210x'
 $Cli = Join-Path $CliDir 'arduino-cli.exe'
-$Sketch = Join-Path $ScriptDir 'sketches\SetupCheck'
 $BoardUrl = 'https://espressif.github.io/arduino-esp32/package_esp32_index.json'
 $IdeZip = Join-Path $Cache 'arduino-ide_2.3.10_Windows_64bit.zip'
 $CliZip = Join-Path $Cache 'arduino-cli_1.5.1_Windows_64bit.zip'
@@ -65,7 +64,7 @@ try { Start-Transcript -Path (Join-Path $Root 'install.log') -Append -ErrorActio
 try {
   if (![Environment]::Is64BitOperatingSystem) { throw 'Windows x64 is required.' }
 
-  Say '1/5 Arduino IDE 2.3.10 (portable ZIP)'
+  Say '1/4 Arduino IDE 2.3.10 (portable ZIP)'
   $ideExe = FindIde
   if (!$ideExe) {
     Fetch $IdeUrl $IdeZip $IdeSha256
@@ -76,7 +75,7 @@ try {
   }
   if (!$ideExe) { throw 'Arduino IDE executable was not found in ZIP.' }
 
-  Say '2/5 Arduino CLI 1.5.1'
+  Say '2/4 Arduino CLI 1.5.1'
   if (!(Test-Path $Cli)) {
     Fetch $CliUrl $CliZip $CliSha256
     New-Item -ItemType Directory -Force -Path $CliDir | Out-Null
@@ -86,7 +85,7 @@ try {
   & $Cli version
   if ($LASTEXITCODE -ne 0) { throw 'Arduino CLI version check failed.' }
 
-  Say '3/5 ESP32 Core 3.3.12'
+  Say '3/4 ESP32 Core 3.3.12'
   $ArduinoData = Join-Path $env:LOCALAPPDATA 'Arduino15'
   New-Item -ItemType Directory -Force -Path $ArduinoData | Out-Null
   $Config = Join-Path $ArduinoData 'arduino-cli.yaml'
@@ -99,18 +98,19 @@ try {
     & $Cli config add board_manager.additional_urls $BoardUrl
     if ($LASTEXITCODE -ne 0) { throw 'Failed to add Espressif board manager URL.' }
   }
-  & $Cli core update-index
-  if ($LASTEXITCODE -ne 0) { throw 'Failed to update Arduino board indexes.' }
-  $CoreList = & $Cli core list
+  $CoreList = & $Cli core list 2>$null
   if (($CoreList | Out-String) -notmatch 'esp32:esp32\s+3\.3\.12') {
+    & $Cli core update-index
+    if ($LASTEXITCODE -ne 0) { throw 'Failed to update Arduino board indexes.' }
     & $Cli core install 'esp32:esp32@3.3.12'
     if ($LASTEXITCODE -ne 0) { throw 'ESP32 Core installation failed.' }
   } else { Say 'ESP32 Core 3.3.12 already installed.' }
 
-  Say '4/5 CP210x USB-to-UART driver'
+  Say '4/4 CP210x USB-to-UART driver'
   $Device = Get-PnpDevice -PresentOnly -ErrorAction SilentlyContinue |
     Where-Object { $_.InstanceId -like 'USB\VID_10C4&PID_EA60*' } | Select-Object -First 1
-  if ($Device -and $Device.Status -eq 'OK') {
+  $DriverMarker = Join-Path $Root 'cp210x-installed.ok'
+  if (($Device -and $Device.Status -eq 'OK') -or (!$Device -and (Test-Path -LiteralPath $DriverMarker))) {
     Say 'CP210x device is already functioning.'
   } else {
     try {
@@ -131,18 +131,14 @@ try {
         $proc = Start-Process pnputil.exe -ArgumentList $argText -Verb RunAs -Wait -PassThru
         if ($proc.ExitCode -ne 0) { throw 'Driver installer exited with an error.' }
       }
+      Set-Content -LiteralPath $DriverMarker -Value 'installed' -Encoding ASCII
     } catch {
-      Write-Warning "CP210x driver not installed: $($_.Exception.Message)"
-      Write-Warning 'Contact school IT if you cannot approve driver installation.'
+      throw "CP210x driver installation failed: $($_.Exception.Message). Contact school IT if approval is required."
     }
   }
-  Say '5/5 Compile independent SetupCheck sketch'
-  & $Cli compile --fqbn esp32:esp32:esp32 $Sketch
-  if ($LASTEXITCODE -ne 0) { throw 'Sketch compilation failed.' }
   Say 'IDE and ESP32 compiler are ready.'
   Say 'Choose Board: ESP32 Dev Module; choose the actual CP210x COM port.'
   Say 'USB uploading needs a functioning CP210x driver and a connected ESP32.'
-  Start-Process -FilePath $ideExe
   exit 0
 } catch {
   Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red

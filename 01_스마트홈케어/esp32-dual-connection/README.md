@@ -21,7 +21,7 @@ Open `sketches/SmartHomeCare/SmartHomeCare.ino`, install **esp32 by Espressif Sy
 
 ## 2. PC dashboard
 
-Windows with Python 3.10+:
+Recommended: double-click the assignment's run.cmd, select 4 to open the USB/BLE sketch and upload it, close Serial Monitor, then select 5 (USB/BLE) or 6 (BLE only). Required libraries are installed automatically. Manual commands (optional), Windows with Python 3.10+:
 
 ```powershell
 cd pc

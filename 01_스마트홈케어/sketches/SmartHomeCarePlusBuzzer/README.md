@@ -55,6 +55,6 @@ constexpr uint32_t BUZZER_TONE_HZ = 2000;
 
 Arduino IDE: **ESP32 Dev Module** / Espressif Core **3.3.12** 선택. 그다음 `SmartHomeCarePlusBuzzer.ino` 열고 업로드.
 
-[공통 설치기](../../../00_아두이노설치/)의 `check-build.cmd`에 스케치 폴더를 인수로 전달해 컴파일할 수 있습니다.
+과제 최상위 `run.cmd`의 메뉴 3에서 스케치를 열고 Arduino IDE 검증 버튼으로 컴파일할 수 있습니다.
 
 **검증 범위:** GitHub 코드 업로드는 확인했으나 학교 PC에서의 실제 컴파일, GPIO 출력 및 부저 동작은 아직 검증되지 않았습니다. 부저 정격을 확인한 뒤 전원을 연결하세요.
